@@ -1,0 +1,887 @@
+<html><head><base href=".">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a237e">
+<title>Painel Administrativo - Delivery</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: #f8f9fa;
+    padding: 16px;
+    min-height: 100vh;
+}
+
+.admin-panel {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.header {
+    background: linear-gradient(135deg, #1a237e, #0d47a1);
+    color: white;
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.nav-btn {
+    flex: 1;
+    background: white;
+    color: #1a237e;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.nav-btn:active {
+    transform: scale(0.98);
+}
+
+.order-count {
+    position: absolute; 
+    top: -8px;
+    right: -8px; 
+    background: #f44336;
+    color: white;
+    border-radius: 12px;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0 8px;
+    box-shadow: 0 2px 4px rgba(244,67,54,0.3);
+}
+
+.nav-btn.active {
+    background: #1a237e;
+    color: white;
+}
+
+.add-product-btn {
+    background: linear-gradient(135deg, #00c853, #64dd17);
+    color: white;
+    border: none;
+    padding: 16px 24px;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,200,83,0.2);
+    transition: all 0.2s ease;
+}
+
+.add-product-btn:active {
+    transform: scale(0.98);
+}
+
+.product-form, .order-list, .categories-form {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    display: none;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #37474f;
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+    background: white;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #1a237e;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #1a237e, #0d47a1);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 12px;
+    width: 100%;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(26,35,126,0.2);
+    transition: all 0.2s ease;
+}
+
+.products-list, .categories-list {
+    background: white;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.product-item, .order-item, .category-item {
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-item:last-child,
+.order-item:last-child,
+.category-item:last-child {
+    border-bottom: none;
+}
+
+.product-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-right: 16px;
+}
+
+.delete-btn {
+    background: #ef5350;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.order-details {
+    margin-left: 12px;
+    flex: 1;
+}
+
+.order-details strong {
+    font-size: 16px;
+    color: #37474f;
+    margin-bottom: 4px;
+    display: block;
+    font-weight: 700;
+}
+
+.order-details p {
+    color: #78909c;
+    font-size: 14px;
+    margin: 4px 0;
+    line-height: 1.4;
+    font-weight: 700;
+}
+
+.order-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.accept-btn, .deliver-btn {
+    background: #00c853;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.back-btn {
+    background: #ffa000;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.cancel-btn {
+    background: #ef5350;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background: #ffa000;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
+.product-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.product-item strong {
+    font-weight: 700;
+}
+
+.category-item strong {
+    font-weight: 700;
+}
+
+.product-item p {
+    font-weight: 700;
+}
+
+.finish-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.back-to-btn {
+    background: #ffa000;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    margin-left: 8px;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 12px;
+    }
+    
+    .header {
+        padding: 16px;
+        border-radius: 12px;
+    }
+    
+    .nav-btn, .add-product-btn {
+        padding: 12px 16px;
+    }
+    
+    .product-form, .order-list, .categories-form {
+        padding: 16px;
+    }
+    
+    .order-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .order-actions button {
+        width: 100%;
+    }
+    
+    .product-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .product-actions button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="admin-panel">
+    <div class="header">
+        <h1>Painel Administrativo</h1>
+    </div>
+
+    <div class="nav-buttons">
+        <button class="nav-btn active" onclick="showSection(&apos;products&apos;)">Produtos</button>
+        <button class="nav-btn" onclick="showSection(&apos;orders&apos;)" style="position: relative;">Pedidos<span id="orderCount" class="order-count" style="display: none;">0</span></button>
+        <button class="nav-btn" onclick="showSection(&apos;categories&apos;)">+ Categoria</button>
+    </div>
+
+    <div id="productsSection" class="section" style="display:none;">
+        <button class="add-product-btn" onclick="toggleForm()">Adicionar Produto</button>
+
+        <div class="product-form" id="productForm">
+            <div class="form-group">
+                <label for="productName">Nome do Produto</label>
+                <input type="text" id="productName" required>
+            </div>
+            <div class="form-group">
+                <label for="productCategory">Categoria</label>
+                <select id="productCategory" required>
+                    <option value>Selecione uma categoria</option>
+                    <option value="bebidas">Bebidas</option>
+                    <option value="destilados">Destilados</option>
+                    <option value="cervejas">Cervejas</option>
+                    <option value="vinhos">Vinhos</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="productPrice">Pre&#xe7;o</label>
+                <input type="number" id="productPrice" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="productQuantity">Quantidade</label>
+                <input type="number" id="productQuantity" required>
+            </div>
+            <div class="form-group">
+                <label for="productImage">URL da Imagem</label>
+                <input type="url" id="productImage" required>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="addProduct()">Salvar Produto</button>
+                <button class="submit-btn" style="background: #e74c3c;" onclick="toggleForm()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="product-form" id="editProductForm" style="display: none;">
+            <div class="form-group">
+                <label for="editProductName">Nome do Produto</label>
+                <input type="text" id="editProductName" required>
+            </div>
+            <div class="form-group">
+                <label for="editProductCategory">Categoria</label>
+                <select id="editProductCategory" required>
+                    <option value>Selecione uma categoria</option>
+                    <option value="bebidas">Bebidas</option>
+                    <option value="destilados">Destilados</option>
+                    <option value="cervejas">Cervejas</option>
+                    <option value="vinhos">Vinhos</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editProductPrice">Pre&#xe7;o</label>
+                <input type="number" id="editProductPrice" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="editProductQuantity">Quantidade</label>
+                <input type="number" id="editProductQuantity" required>
+            </div>
+            <div class="form-group">
+                <label for="editProductImage">URL da Imagem</label>
+                <input type="url" id="editProductImage" required>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="updateProduct()">Atualizar Produto</button>
+                <button class="submit-btn" style="background: #e74c3c;" onclick="cancelEdit()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="products-list" id="productsList">
+            <!-- Produtos serão inseridos aqui dinamicamente -->
+        </div>
+    </div>
+
+    <div id="ordersSection" class="section" style="display:none;">
+        <div class="order-list" id="ordersList">
+            <!-- Pedidos serão inseridos aqui dinamicamente -->
+        </div>
+    </div>
+
+    <div id="categoriesSection" class="section" style="display:none;">
+        <button class="add-product-btn" onclick="toggleCategoryForm()">Adicionar Categoria</button>
+
+        <div class="categories-form" id="categoryForm">
+            <div class="form-group">
+                <label for="categoryName">Nome da Categoria</label>
+                <input type="text" id="categoryName" required>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="addCategory()">Salvar Categoria</button>
+                <button class="submit-btn" style="background: #e74c3c;" onclick="toggleCategoryForm()">Cancelar</button>
+            </div>
+        </div>
+        
+        <div class="categories-form" id="editCategoryForm" style="display: none;">
+            <div class="form-group">
+                <label for="editCategoryName">Nome da Categoria</label>
+                <input type="text" id="editCategoryName" required>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="updateCategory()">Atualizar Categoria</button>
+                <button class="submit-btn" style="background: #e74c3c;" onclick="cancelCategoryEdit()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="categories-list" id="categoriesList">
+            <!-- Categories will be inserted here dynamically -->
+        </div>
+    </div>
+</div>
+
+<script type="module">import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyA5fUshfXl2Bh_UYH0YKCHecuv8HeraQRc",
+  authDomain: "entrega-adega.firebaseapp.com",
+  databaseURL: "https://entrega-adega-default-rtdb.firebaseio.com",
+  projectId: "entrega-adega",
+  storageBucket: "entrega-adega.firebasestorage.app",
+  messagingSenderId: "561397387738",
+  appId: "1:561397387738:web:a0b3662cc9bc24b3f530e3"
+};
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const productsRef = ref(database, 'products');
+const ordersRef = ref(database, 'orders');
+const categoriesRef = ref(database, 'categories');
+let currentEditingKey = null;
+let currentEditingCategoryKey = null;
+window.showSection = function (section) {
+  document.querySelectorAll('.section').forEach(s => {
+    s.style.display = 'none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(section + 'Section').style.display = 'block';
+  document.querySelector(`button[onclick="showSection('${section}')"]`).classList.add('active');
+};
+window.toggleForm = function () {
+  const form = document.getElementById('productForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+};
+window.addProduct = function () {
+  const name = document.getElementById('productName').value;
+  const price = document.getElementById('productPrice').value;
+  const quantity = document.getElementById('productQuantity').value;
+  const image = document.getElementById('productImage').value;
+  const category = document.getElementById('productCategory').value;
+  if (name && price && quantity && image && category) {
+    push(productsRef, {
+      name: name,
+      price: parseFloat(price),
+      quantity: parseInt(quantity),
+      image: image,
+      category: category
+    });
+    document.getElementById('productName').value = '';
+    document.getElementById('productPrice').value = '';
+    document.getElementById('productQuantity').value = '';
+    document.getElementById('productImage').value = '';
+    document.getElementById('productCategory').value = '';
+    toggleForm();
+  } else {
+    alert('Por favor, preencha todos os campos!');
+  }
+};
+window.toggleCategoryForm = function () {
+  const form = document.getElementById('categoryForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+};
+window.addCategory = function () {
+  const name = document.getElementById('categoryName').value;
+  if (name) {
+    push(categoriesRef, {
+      name: name
+    });
+    document.getElementById('categoryName').value = '';
+    toggleCategoryForm();
+  } else {
+    alert('Por favor, preencha o nome da categoria!');
+  }
+};
+window.deleteCategory = function (categoryKey) {
+  if (confirm('Tem certeza que deseja excluir esta categoria?')) {
+    const categoryRef = ref(database, `categories/${categoryKey}`);
+    remove(categoryRef);
+  }
+};
+onValue(productsRef, snapshot => {
+  const productsList = document.getElementById('productsList');
+  productsList.innerHTML = '';
+  snapshot.forEach(childSnapshot => {
+    const product = childSnapshot.val();
+    const productKey = childSnapshot.key;
+    const productElement = document.createElement('div');
+    productElement.className = 'product-item';
+    productElement.innerHTML = `
+            <div style="display: flex; align-items: center;">
+                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/50'">
+                <div>
+                    <strong>${product.name}</strong>
+                    <p>R$ ${product.price.toFixed(2)}</p>
+                    <p>Quantidade: ${product.quantity}</p>
+                    <p>Categoria: ${product.category || 'Não definida'}</p>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="edit-btn" onclick='editProduct("${productKey}", ${JSON.stringify(product)})'>Editar</button>
+                <button class="delete-btn" onclick="deleteProduct('${productKey}')">Excluir</button>
+            </div>
+        `;
+    productsList.appendChild(productElement);
+  });
+});
+onValue(ordersRef, snapshot => {
+  const ordersList = document.getElementById('ordersList');
+  ordersList.innerHTML = '';
+  ordersList.style.display = 'block';
+  let pendingOrders = 0;
+  const orders = [];
+  snapshot.forEach(childSnapshot => {
+    orders.push({
+      key: childSnapshot.key,
+      ...childSnapshot.val()
+    });
+  });
+  orders.sort((a, b) => {
+    if (a.status === 'finished' && b.status === 'finished') return 0;
+    if (a.status === 'finished') return 1;
+    if (b.status === 'finished') return -1;
+    if (!a.status || a.status === 'pending' || a.status === 'accepted' || a.status === 'delivering' || a.status === 'cancelled') {
+      if (!b.status || b.status === 'pending' || b.status === 'accepted' || b.status === 'delivering' || b.status === 'cancelled') {
+        return 0;
+      }
+      return -1;
+    }
+    if (!b.status || b.status === 'pending' || b.status === 'accepted' || b.status === 'delivering' || b.status === 'cancelled') {
+      return 1;
+    }
+    return (b.finishedAt || 0) - (a.finishedAt || 0);
+  });
+  orders.forEach(order => {
+    if (order.status === 'finished' || order.status === 'cancelled') {
+      return;
+    }
+    const orderKey = order.key;
+    if (!order.status || order.status === 'pending') {
+      pendingOrders++;
+    }
+    const orderElement = document.createElement('div');
+    orderElement.className = 'order-item';
+    let actionButtons = '';
+    if (order.status === 'accepted') {
+      actionButtons = `<button class="deliver-btn" onclick="deliverOrder('${orderKey}')">Entregar!</button>
+       <button class="back-btn" onclick="backToInitial('${orderKey}')">Voltar</button>`;
+    } else if (order.status === 'delivering') {
+      actionButtons = `
+        <button class="finish-btn" onclick="finishOrder('${orderKey}')">Finalizar Pedido?</button>
+        <button class="back-to-btn" onclick="backToDelivering('${orderKey}')">Voltar</button>
+      `;
+    } else {
+      actionButtons = `<button class="accept-btn" onclick="acceptOrder('${orderKey}')">Aceitar</button>
+         <button class="cancel-btn" onclick="cancelOrder('${orderKey}')">Cancelar</button>`;
+    }
+    orderElement.innerHTML = `
+            <div class="order-details">
+                <strong>${order.name}</strong>
+                <p>Telefone: ${order.phone}</p>
+                <p>Endereço: ${order.street}, ${order.number}</p>
+                <p>Bairro: ${order.neighborhood}</p>
+                <p>Forma de Pagamento: ${(order.payment || 'Não informado').charAt(0).toUpperCase() + (order.payment || 'Não informado').slice(1)}</p>
+                <p>Troco: ${order.changeAmount ? `R$ ${typeof order.changeAmount === 'number' && order.changeAmount % 1 === 0 ? order.changeAmount.toFixed(0) : order.changeAmount.toFixed(2)}` : 'Não necessário'}</p>
+                <p>Observação: ${order.observation || 'Nenhuma observação'}</p>
+                <p>Produtos: ${order.items.map(item => `(${item.quantity}) ${item.name}`).join(", ")}</p>
+                <p>Valor Total: R$ ${order.total}</p>
+            </div>
+            <div class="order-actions">
+                ${actionButtons}
+            </div>
+        `;
+    ordersList.appendChild(orderElement);
+  });
+  const orderCountElement = document.getElementById('orderCount');
+  if (pendingOrders > 0) {
+    orderCountElement.style.display = 'flex';
+    orderCountElement.textContent = pendingOrders;
+  } else {
+    orderCountElement.style.display = 'none';
+  }
+});
+onValue(categoriesRef, snapshot => {
+  const categoriesList = document.getElementById('categoriesList');
+  categoriesList.innerHTML = '';
+  const categorySelect = document.getElementById('productCategory');
+  const editCategorySelect = document.getElementById('editProductCategory');
+  categorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+  editCategorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+  const categories = [];
+  snapshot.forEach(childSnapshot => {
+    categories.push({
+      key: childSnapshot.key,
+      ...childSnapshot.val()
+    });
+  });
+  categories.sort((a, b) => a.name.localeCompare(b.name));
+  categories.forEach(category => {
+    const categoryElement = document.createElement('div');
+    categoryElement.className = 'category-item';
+    categoryElement.innerHTML = `
+        <div>
+            <strong>${category.name}</strong>
+        </div>
+        <div class="product-actions">
+            <button class="edit-btn" onclick='editCategory("${category.key}", ${JSON.stringify(category)})'>Editar</button>
+            <button class="delete-btn" onclick="deleteCategory('${category.key}')">Excluir</button>
+        </div>
+    `;
+    categoriesList.appendChild(categoryElement);
+    const option = document.createElement('option');
+    option.value = category.name;
+    option.textContent = category.name;
+    categorySelect.appendChild(option.cloneNode(true));
+    editCategorySelect.appendChild(option);
+  });
+});
+window.deleteProduct = function (productKey) {
+  if (confirm('Tem certeza que deseja excluir este produto?')) {
+    const productRef = ref(database, `products/${productKey}`);
+    remove(productRef);
+  }
+};
+window.acceptOrder = function (orderKey) {
+  if (confirm('Deseja aceitar este pedido?')) {
+    const orderRef = ref(database, `orders/${orderKey}`);
+    update(orderRef, {
+      status: 'accepted'
+    }).then(() => {
+      alert('Pedido aceito com sucesso!');
+    }).catch(error => {
+      console.error('Erro ao aceitar pedido:', error);
+      alert('Erro ao aceitar pedido');
+    });
+  }
+};
+window.cancelOrder = function (orderKey) {
+  if (confirm('Deseja cancelar este pedido?')) {
+    const orderRef = ref(database, `orders/${orderKey}`);
+    get(orderRef).then(snapshot => {
+      const order = snapshot.val();
+      if (order && order.items) {
+        order.items.forEach(item => {
+          const productRef = ref(database, `products/${item.id}`);
+          get(productRef).then(prodSnapshot => {
+            const product = prodSnapshot.val();
+            if (product) {
+              update(productRef, {
+                quantity: product.quantity + item.quantity
+              });
+            }
+          });
+        });
+      }
+      update(orderRef, {
+        status: 'cancelled',
+        statusMessage: 'Pedido Cancelado Pelo Estabelecimento',
+        cancelledAt: Date.now()
+      }).then(() => {
+        alert('Pedido cancelado com sucesso!');
+      }).catch(error => {
+        console.error('Erro ao cancelar pedido:', error);
+        alert('Erro ao cancelar pedido');
+      });
+    });
+  }
+};
+window.backToInitial = function (orderKey) {
+  if (confirm('Deseja voltar o pedido para o estado inicial?')) {
+    const orderRef = ref(database, `orders/${orderKey}`);
+    update(orderRef, {
+      status: 'pending'
+    }).then(() => {
+      alert('Pedido retornado ao estado inicial!');
+    }).catch(error => {
+      console.error('Erro ao retornar pedido:', error);
+      alert('Erro ao retornar pedido');
+    });
+  }
+};
+window.editProduct = function (productKey, product) {
+  currentEditingKey = productKey;
+  document.getElementById('editProductName').value = product.name;
+  document.getElementById('editProductPrice').value = product.price;
+  document.getElementById('editProductQuantity').value = product.quantity;
+  document.getElementById('editProductImage').value = product.image;
+  document.getElementById('editProductCategory').value = product.category || '';
+  document.getElementById('editProductForm').style.display = 'block';
+  document.getElementById('productForm').style.display = 'none';
+};
+window.updateProduct = function () {
+  if (!currentEditingKey) return;
+  const name = document.getElementById('editProductName').value;
+  const price = document.getElementById('editProductPrice').value;
+  const quantity = document.getElementById('editProductQuantity').value;
+  const image = document.getElementById('editProductImage').value;
+  const category = document.getElementById('editProductCategory').value;
+  if (name && price && quantity && image && category) {
+    const productRef = ref(database, `products/${currentEditingKey}`);
+    update(productRef, {
+      name: name,
+      price: parseFloat(price),
+      quantity: parseInt(quantity),
+      image: image,
+      category: category
+    }).then(() => {
+      document.getElementById('editProductForm').style.display = 'none';
+      currentEditingKey = null;
+    }).catch(error => {
+      console.error('Erro ao atualizar produto:', error);
+      alert('Erro ao atualizar produto');
+    });
+  } else {
+    alert('Por favor, preencha todos os campos!');
+  }
+};
+window.cancelEdit = function () {
+  document.getElementById('editProductForm').style.display = 'none';
+  currentEditingKey = null;
+};
+window.editCategory = function (categoryKey, category) {
+  currentEditingCategoryKey = categoryKey;
+  const editNameInput = document.getElementById('editCategoryName');
+  editNameInput.value = category.name;
+  editNameInput.defaultValue = category.name;
+  document.getElementById('editCategoryForm').style.display = 'block';
+  document.getElementById('categoryForm').style.display = 'none';
+};
+window.updateCategory = function () {
+  if (!currentEditingCategoryKey) return;
+  const oldName = document.getElementById('editCategoryName').defaultValue;
+  const newName = document.getElementById('editCategoryName').value;
+  if (newName) {
+    const categoryRef = ref(database, `categories/${currentEditingCategoryKey}`);
+    update(categoryRef, {
+      name: newName
+    }).then(() => {
+      const productsRef = ref(database, 'products');
+      onValue(productsRef, snapshot => {
+        snapshot.forEach(childSnapshot => {
+          const product = childSnapshot.val();
+          if (product.category === oldName) {
+            const productRef = ref(database, `products/${childSnapshot.key}`);
+            update(productRef, {
+              category: newName
+            });
+          }
+        });
+      }, {
+        onlyOnce: true
+      });
+      document.getElementById('editCategoryForm').style.display = 'none';
+      currentEditingCategoryKey = null;
+    });
+  } else {
+    alert('Por favor, preencha o nome da categoria!');
+  }
+};
+window.cancelCategoryEdit = function () {
+  document.getElementById('editCategoryForm').style.display = 'none';
+  currentEditingCategoryKey = null;
+};
+window.deliverOrder = function (orderKey) {
+  if (confirm('Confirmar entrega do pedido?')) {
+    const orderRef = ref(database, `orders/${orderKey}`);
+    update(orderRef, {
+      status: 'delivering',
+      statusMessage: 'Seu Pedido Saiu Para Entrega'
+    }).then(() => {
+      alert('Status atualizado: Pedido saiu para entrega!');
+    }).catch(error => {
+      console.error('Erro ao atualizar status:', error);
+      alert('Erro ao atualizar status de entrega');
+    });
+  }
+};
+window.finishOrder = function (orderKey) {
+  if (confirm('Confirmar finalização do pedido?')) {
+    const orderRef = ref(database, `orders/${orderKey}`);
+    update(orderRef, {
+      status: 'finished',
+      finishedAt: Date.now()
+    }).then(() => {
+      alert('Pedido finalizado com sucesso!');
+    }).catch(error => {
+      console.error('Erro ao finalizar pedido:', error);
+      alert('Erro ao finalizar pedido');
+    });
+  }
+};
+window.backToDelivering = function (orderKey) {
+  if (confirm('Deseja voltar o pedido para o status anterior?')) {
+    const orderRef = ref(database, `orders/${orderKey}`);
+    update(orderRef, {
+      status: 'accepted',
+      statusMessage: 'Pedido Aceito'
+    }).then(() => {
+      alert('Status do pedido atualizado com sucesso!');
+    }).catch(error => {
+      console.error('Erro ao atualizar status:', error);
+      alert('Erro ao atualizar status do pedido');
+    });
+  }
+};
+document.getElementById('productsSection').style.display = 'block';
+document.getElementById('ordersSection').style.display = 'none';
+document.getElementById('categoriesSection').style.display = 'none';</script>
+
+</body></html>
