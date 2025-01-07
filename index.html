@@ -22,6 +22,7 @@ body {
 .admin-panel {
     max-width: 100%;
     margin: 0 auto;
+    position: relative;
 }
 
 .header {
@@ -107,7 +108,27 @@ body {
     transform: scale(0.98);
 }
 
-.product-form, .order-list, .categories-form {
+.product-form {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    display: none;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    overflow-y: auto;
+    width: 100%;
+    height: 100vh; 
+    margin: 0;
+    border-radius: 0;
+}
+
+.order-list, .categories-form {
     background: white;
     padding: 24px;
     border-radius: 16px;
@@ -316,6 +337,37 @@ body {
     margin-left: 8px;
 }
 
+.search-container {
+    margin-bottom: 24px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+    margin-bottom: 16px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #1a237e;
+}
+
+.duplicate-btn {
+    background: #9c27b0; 
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    margin-right: 8px;
+}
+
 @media (max-width: 480px) {
     body {
         padding: 12px;
@@ -367,8 +419,12 @@ body {
         <button class="nav-btn" onclick="showSection(&apos;categories&apos;)">+ Categoria</button>
     </div>
 
-    <div id="productsSection" class="section" style="display:none;">
+    <div id="productsSection" class="section" style="display:block;">
         <button class="add-product-btn" onclick="toggleForm()">Adicionar Produto</button>
+
+        <div class="search-container" style="margin-bottom: 24px;">
+            <input type="text" id="productSearch" placeholder="Pesquisar produtos..." class="search-input">
+        </div>
 
         <div class="product-form" id="productForm">
             <div class="form-group">
@@ -498,6 +554,9 @@ const ordersRef = ref(database, 'orders');
 const categoriesRef = ref(database, 'categories');
 let currentEditingKey = null;
 let currentEditingCategoryKey = null;
+function removeAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 window.showSection = function (section) {
   document.querySelectorAll('.section').forEach(s => {
     s.style.display = 'none';
@@ -508,6 +567,14 @@ window.showSection = function (section) {
 };
 window.toggleForm = function () {
   const form = document.getElementById('productForm');
+  document.body.style.overflow = form.style.display === 'none' ? 'hidden' : 'auto';
+  if (form.style.display !== 'none') {
+    document.getElementById('productName').value = '';
+    document.getElementById('productPrice').value = '';
+    document.getElementById('productQuantity').value = '';
+    document.getElementById('productImage').value = '';
+    document.getElementById('productCategory').value = '';
+  }
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
 };
 window.addProduct = function () {
@@ -522,7 +589,8 @@ window.addProduct = function () {
       price: parseFloat(price),
       quantity: parseInt(quantity),
       image: image,
-      category: category
+      category: category,
+      timestamp: Date.now()
     });
     document.getElementById('productName').value = '';
     document.getElementById('productPrice').value = '';
@@ -558,28 +626,50 @@ window.deleteCategory = function (categoryKey) {
 };
 onValue(productsRef, snapshot => {
   const productsList = document.getElementById('productsList');
+  const searchInput = document.getElementById('productSearch');
   productsList.innerHTML = '';
+  const products = [];
   snapshot.forEach(childSnapshot => {
-    const product = childSnapshot.val();
-    const productKey = childSnapshot.key;
-    const productElement = document.createElement('div');
-    productElement.className = 'product-item';
-    productElement.innerHTML = `
-            <div style="display: flex; align-items: center;">
-                <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/50'">
-                <div>
-                    <strong>${product.name}</strong>
-                    <p>R$ ${product.price.toFixed(2)}</p>
-                    <p>Quantidade: ${product.quantity}</p>
-                    <p>Categoria: ${product.category || 'Não definida'}</p>
-                </div>
-            </div>
-            <div class="product-actions">
-                <button class="edit-btn" onclick='editProduct("${productKey}", ${JSON.stringify(product)})'>Editar</button>
-                <button class="delete-btn" onclick="deleteProduct('${productKey}')">Excluir</button>
-            </div>
-        `;
-    productsList.appendChild(productElement);
+    products.push({
+      key: childSnapshot.key,
+      timestamp: childSnapshot.val().timestamp || 0, 
+      ...childSnapshot.val()
+    });
+  });
+  products.sort((a, b) => b.timestamp - a.timestamp);
+  function filterProducts(searchTerm) {
+    const normalizedSearchTerm = removeAccents(searchTerm.toLowerCase());
+    return products.filter(product => removeAccents(product.name.toLowerCase()).includes(normalizedSearchTerm) || removeAccents(product.category.toLowerCase()).includes(normalizedSearchTerm));
+  }
+  function renderProducts(productsToRender) {
+    productsList.innerHTML = '';
+    productsToRender.forEach(product => {
+      const productElement = document.createElement('div');
+      productElement.className = 'product-item';
+      productElement.innerHTML = `
+        <div style="display: flex; align-items: center;">
+          <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/50'">
+          <div>
+            <strong>${product.name}</strong>
+            <p>R$ ${product.price.toFixed(2)}</p>
+            <p>Quantidade: ${product.quantity}</p>
+            <p>Categoria: ${product.category || 'Não definida'}</p>
+          </div>
+        </div>
+        <div class="product-actions">
+          <button class="edit-btn" onclick='editProduct("${product.key}", ${JSON.stringify(product)})'>Editar</button>
+          <button class="duplicate-btn" onclick='duplicateProduct(${JSON.stringify(product)})'>Duplicar</button>
+          <button class="delete-btn" onclick="deleteProduct('${product.key}')">Excluir</button>
+        </div>
+      `;
+      productsList.appendChild(productElement);
+    });
+  }
+  renderProducts(products);
+  searchInput.addEventListener('input', e => {
+    const searchTerm = e.target.value;
+    const filteredProducts = filterProducts(searchTerm);
+    renderProducts(filteredProducts);
   });
 });
 onValue(ordersRef, snapshot => {
@@ -879,6 +969,18 @@ window.backToDelivering = function (orderKey) {
       alert('Erro ao atualizar status do pedido');
     });
   }
+};
+window.duplicateProduct = function(product) {
+  const duplicatedProduct = {
+    name: product.name + ' (cópia)',
+    price: product.price,
+    quantity: product.quantity,
+    image: product.image,
+    category: product.category,
+    timestamp: Date.now()
+  };
+  
+  push(productsRef, duplicatedProduct);
 };
 document.getElementById('productsSection').style.display = 'block';
 document.getElementById('ordersSection').style.display = 'none';
