@@ -632,7 +632,7 @@ onValue(productsRef, snapshot => {
   snapshot.forEach(childSnapshot => {
     products.push({
       key: childSnapshot.key,
-      timestamp: childSnapshot.val().timestamp || 0, 
+      timestamp: childSnapshot.val().timestamp || 0,
       ...childSnapshot.val()
     });
   });
@@ -893,6 +893,10 @@ window.editCategory = function (categoryKey, category) {
   editNameInput.defaultValue = category.name;
   document.getElementById('editCategoryForm').style.display = 'block';
   document.getElementById('categoryForm').style.display = 'none';
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 };
 window.updateCategory = function () {
   if (!currentEditingCategoryKey) return;
@@ -970,7 +974,7 @@ window.backToDelivering = function (orderKey) {
     });
   }
 };
-window.duplicateProduct = function(product) {
+window.duplicateProduct = function (product) {
   const duplicatedProduct = {
     name: product.name + ' (cópia)',
     price: product.price,
@@ -979,7 +983,6 @@ window.duplicateProduct = function(product) {
     category: product.category,
     timestamp: Date.now()
   };
-  
   push(productsRef, duplicatedProduct);
 };
 document.getElementById('productsSection').style.display = 'block';
