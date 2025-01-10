@@ -42,9 +42,19 @@ body {
 
 .nav-buttons {
     display: flex;
+    flex-direction: column;
     gap: 12px;
     margin-bottom: 24px;
     position: relative;
+}
+
+.nav-row {
+    display: flex;
+    gap: 12px;
+}
+
+.nav-row:first-child {
+    margin-bottom: 0;
 }
 
 .nav-btn {
@@ -166,6 +176,13 @@ body {
     font-size: 16px;
     transition: border-color 0.2s ease;
     background: white;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    cursor: pointer;
 }
 
 .form-group input:focus, .form-group select:focus {
@@ -186,14 +203,14 @@ body {
     transition: all 0.2s ease;
 }
 
-.products-list, .categories-list {
+.products-list, .categories-list, .hours-list {
     background: white;
     padding: 16px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
-.product-item, .order-item, .category-item {
+.product-item, .order-item, .category-item, .hours-item {
     padding: 16px;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
@@ -203,7 +220,8 @@ body {
 
 .product-item:last-child,
 .order-item:last-child,
-.category-item:last-child {
+.category-item:last-child,
+.hours-item:last-child {
     border-bottom: none;
 }
 
@@ -368,6 +386,164 @@ body {
     margin-right: 8px;
 }
 
+.hours-list {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+
+.hours-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+.hours-item:hover {
+  background: #f8f9fa;
+}
+
+.hours-item:last-child {
+  border-bottom: none;
+}
+
+.hours-item .day-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.hours-item .day-info strong {
+  font-size: 18px;
+  color: #1a237e;
+  font-weight: 700;
+}
+
+.hours-item .day-info p {
+  font-size: 16px;
+  color: #455a64;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hours-item .day-info p svg {
+  width: 18px;
+  height: 18px;
+  color: #78909c;
+}
+
+.hours-form {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+}
+
+.store-status {
+  background: linear-gradient(135deg, #fff, #f8f9fa);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.store-status h3 {
+  font-size: 20px;
+  color: #1a237e;
+  font-weight: 700;
+}
+
+#storeStatusText {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.store-status input:checked + .slider {
+  background: linear-gradient(135deg, #00c853, #64dd17);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ef5350;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.edit-hours-btn {
+  background: #ffa000;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 8px;
+}
+
+.hours-edit-form {
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  margin-bottom: 24px;
+  display: none;
+}
+
 @media (max-width: 480px) {
     body {
         padding: 12px;
@@ -382,7 +558,7 @@ body {
         padding: 12px 16px;
     }
     
-    .product-form, .order-list, .categories-form {
+    .product-form, .order-list, .categories-form, .hours-form {
         padding: 16px;
     }
     
@@ -414,9 +590,14 @@ body {
     </div>
 
     <div class="nav-buttons">
-        <button class="nav-btn active" onclick="showSection(&apos;products&apos;)">Produtos</button>
-        <button class="nav-btn" onclick="showSection(&apos;orders&apos;)" style="position: relative;">Pedidos<span id="orderCount" class="order-count" style="display: none;">0</span></button>
-        <button class="nav-btn" onclick="showSection(&apos;categories&apos;)">+ Categoria</button>
+        <div class="nav-row">
+            <button class="nav-btn active" onclick="showSection(&apos;products&apos;)">Produtos</button>
+            <button class="nav-btn" onclick="showSection(&apos;orders&apos;)" style="position: relative;">Pedidos<span id="orderCount" class="order-count" style="display: none;">0</span></button>
+            <button class="nav-btn" onclick="showSection(&apos;categories&apos;)">+ Categoria</button>
+        </div>
+        <div class="nav-row">
+            <button class="nav-btn" onclick="showSection(&apos;hours&apos;)">Hor&#xe1;rios</button>
+        </div>
     </div>
 
     <div id="productsSection" class="section" style="display:block;">
@@ -499,12 +680,284 @@ body {
         </div>
     </div>
 
+    <div id="hoursSection" class="section" style="display:none;">
+        <button class="add-product-btn" onclick="toggleHoursForm()">Adicionar Hor&#xe1;rio</button>
+
+        <div class="hours-form" id="hoursForm" style="display: none;">
+            <div class="form-group">
+                <label for="dayOfWeek">Dia da Semana</label>
+                <select id="dayOfWeek" required>
+                    <option value>Selecione um dia</option>
+                    <option value="Segunda">Segunda-feira</option>
+                    <option value="Ter&#xe7;a">Ter&#xe7;a-feira</option>
+                    <option value="Quarta">Quarta-feira</option>
+                    <option value="Quinta">Quinta-feira</option>
+                    <option value="Sexta">Sexta-feira</option>
+                    <option value="S&#xe1;bado">S&#xe1;bado</option>
+                    <option value="Domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="openTime">Hor&#xe1;rio de Abertura</label>
+                <select id="openTime" required>
+                    <option value>Selecione o hor&#xe1;rio</option>
+                    <option value="00:00">00:00</option>
+                    <option value="00:30">00:30</option>
+                    <option value="01:00">01:00</option>
+                    <option value="01:30">01:30</option>
+                    <option value="02:00">02:00</option>
+                    <option value="02:30">02:30</option>
+                    <option value="03:00">03:00</option>
+                    <option value="03:30">03:30</option>
+                    <option value="04:00">04:00</option>
+                    <option value="04:30">04:30</option>
+                    <option value="05:00">05:00</option>
+                    <option value="05:30">05:30</option>
+                    <option value="06:00">06:00</option>
+                    <option value="06:30">06:30</option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <option value="08:30">08:30</option>
+                    <option value="09:00">09:00</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                    <option value="17:30">17:30</option>
+                    <option value="18:00">18:00</option>
+                    <option value="18:30">18:30</option>
+                    <option value="19:00">19:00</option>
+                    <option value="19:30">19:30</option>
+                    <option value="20:00">20:00</option>
+                    <option value="20:30">20:30</option>
+                    <option value="21:00">21:00</option>
+                    <option value="21:30">21:30</option>
+                    <option value="22:00">22:00</option>
+                    <option value="22:30">22:30</option>
+                    <option value="23:00">23:00</option>
+                    <option value="23:30">23:30</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="closeTime">Hor&#xe1;rio de Fechamento</label>
+                <select id="closeTime" required>
+                    <option value>Selecione o hor&#xe1;rio</option>
+                    <option value="00:00">00:00</option>
+                    <option value="00:30">00:30</option>
+                    <option value="01:00">01:00</option>
+                    <option value="01:30">01:30</option>
+                    <option value="02:00">02:00</option>
+                    <option value="02:30">02:30</option>
+                    <option value="03:00">03:00</option>
+                    <option value="03:30">03:30</option>
+                    <option value="04:00">04:00</option>
+                    <option value="04:30">04:30</option>
+                    <option value="05:00">05:00</option>
+                    <option value="05:30">05:30</option>
+                    <option value="06:00">06:00</option>
+                    <option value="06:30">06:30</option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <option value="08:30">08:30</option>
+                    <option value="09:00">09:00</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                    <option value="17:30">17:30</option>
+                    <option value="18:00">18:00</option>
+                    <option value="18:30">18:30</option>
+                    <option value="19:00">19:00</option>
+                    <option value="19:30">19:30</option>
+                    <option value="20:00">20:00</option>
+                    <option value="20:30">20:30</option>
+                    <option value="21:00">21:00</option>
+                    <option value="21:30">21:30</option>
+                    <option value="22:00">22:00</option>
+                    <option value="22:30">22:30</option>
+                    <option value="23:00">23:00</option>
+                    <option value="23:30">23:30</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="addHours()">Salvar Hor&#xe1;rio</button>
+                <button class="submit-btn" style="background: #e74c3c;" onclick="toggleHoursForm()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="hours-edit-form" id="hoursEditForm" style="display: none;">
+            <div class="form-group">
+                <label for="editDayOfWeek">Dia da Semana</label>
+                <select id="editDayOfWeek" required>
+                    <option value>Selecione um dia</option>
+                    <option value="Segunda">Segunda-feira</option>
+                    <option value="Ter&#xe7;a">Ter&#xe7;a-feira</option>
+                    <option value="Quarta">Quarta-feira</option>
+                    <option value="Quinta">Quinta-feira</option>
+                    <option value="Sexta">Sexta-feira</option>
+                    <option value="S&#xe1;bado">S&#xe1;bado</option>
+                    <option value="Domingo">Domingo</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editOpenTime">Hor&#xe1;rio de Abertura</label>
+                <select id="editOpenTime" required>
+                    <option value>Selecione o hor&#xe1;rio</option>
+                    <option value="00:00">00:00</option>
+                    <option value="00:30">00:30</option>
+                    <option value="01:00">01:00</option>
+                    <option value="01:30">01:30</option>
+                    <option value="02:00">02:00</option>
+                    <option value="02:30">02:30</option>
+                    <option value="03:00">03:00</option>
+                    <option value="03:30">03:30</option>
+                    <option value="04:00">04:00</option>
+                    <option value="04:30">04:30</option>
+                    <option value="05:00">05:00</option>
+                    <option value="05:30">05:30</option>
+                    <option value="06:00">06:00</option>
+                    <option value="06:30">06:30</option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <option value="08:30">08:30</option>
+                    <option value="09:00">09:00</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                    <option value="17:30">17:30</option>
+                    <option value="18:00">18:00</option>
+                    <option value="18:30">18:30</option>
+                    <option value="19:00">19:00</option>
+                    <option value="19:30">19:30</option>
+                    <option value="20:00">20:00</option>
+                    <option value="20:30">20:30</option>
+                    <option value="21:00">21:00</option>
+                    <option value="21:30">21:30</option>
+                    <option value="22:00">22:00</option>
+                    <option value="22:30">22:30</option>
+                    <option value="23:00">23:00</option>
+                    <option value="23:30">23:30</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editCloseTime">Hor&#xe1;rio de Fechamento</label>
+                <select id="editCloseTime" required>
+                    <option value>Selecione o hor&#xe1;rio</option>
+                    <option value="00:00">00:00</option>
+                    <option value="00:30">00:30</option>
+                    <option value="01:00">01:00</option>
+                    <option value="01:30">01:30</option>
+                    <option value="02:00">02:00</option>
+                    <option value="02:30">02:30</option>
+                    <option value="03:00">03:00</option>
+                    <option value="03:30">03:30</option>
+                    <option value="04:00">04:00</option>
+                    <option value="04:30">04:30</option>
+                    <option value="05:00">05:00</option>
+                    <option value="05:30">05:30</option>
+                    <option value="06:00">06:00</option>
+                    <option value="06:30">06:30</option>
+                    <option value="07:00">07:00</option>
+                    <option value="07:30">07:30</option>
+                    <option value="08:00">08:00</option>
+                    <option value="08:30">08:30</option>
+                    <option value="09:00">09:00</option>
+                    <option value="09:30">09:30</option>
+                    <option value="10:00">10:00</option>
+                    <option value="10:30">10:30</option>
+                    <option value="11:00">11:00</option>
+                    <option value="11:30">11:30</option>
+                    <option value="12:00">12:00</option>
+                    <option value="12:30">12:30</option>
+                    <option value="13:00">13:00</option>
+                    <option value="13:30">13:30</option>
+                    <option value="14:00">14:00</option>
+                    <option value="14:30">14:30</option>
+                    <option value="15:00">15:00</option>
+                    <option value="15:30">15:30</option>
+                    <option value="16:00">16:00</option>
+                    <option value="16:30">16:30</option>
+                    <option value="17:00">17:00</option>
+                    <option value="17:30">17:30</option>
+                    <option value="18:00">18:00</option>
+                    <option value="18:30">18:30</option>
+                    <option value="19:00">19:00</option>
+                    <option value="19:30">19:30</option>
+                    <option value="20:00">20:00</option>
+                    <option value="20:30">20:30</option>
+                    <option value="21:00">21:00</option>
+                    <option value="21:30">21:30</option>
+                    <option value="22:00">22:00</option>
+                    <option value="22:30">22:30</option>
+                    <option value="23:00">23:00</option>
+                    <option value="23:30">23:30</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="submit-btn" onclick="updateHours()">Atualizar Hor&#xe1;rio</button>
+                <button class="submit-btn" style="background: #e74c3c;" onclick="toggleHoursEditForm()">Cancelar</button>
+            </div>
+        </div>
+
+        <div class="hours-list" id="hoursList">
+            <!-- Hours will be inserted here dynamically -->
+        </div>
+        <div class="store-status">
+          <h3>Status da Loja</h3>
+          <label class="switch">
+            <input type="checkbox" id="storeOpenToggle" onchange="toggleStoreStatus(event)">
+            <span class="slider round"></span>
+          </label>
+          <span id="storeStatusText">Fechado</span>
+        </div>
+    </div>
+
     <div id="ordersSection" class="section" style="display:none;">
         <div class="order-list" id="ordersList">
             <!-- Pedidos serão inseridos aqui dinamicamente -->
         </div>
     </div>
-
+    
     <div id="categoriesSection" class="section" style="display:none;">
         <button class="add-product-btn" onclick="toggleCategoryForm()">Adicionar Categoria</button>
 
@@ -552,8 +1005,11 @@ const database = getDatabase(app);
 const productsRef = ref(database, 'products');
 const ordersRef = ref(database, 'orders');
 const categoriesRef = ref(database, 'categories');
+const hoursRef = ref(database, 'hours');
+const storeStatusRef = ref(database, 'storeStatus');
 let currentEditingKey = null;
 let currentEditingCategoryKey = null;
+let currentEditingHoursKey = null;
 function removeAccents(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -564,6 +1020,9 @@ window.showSection = function (section) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(section + 'Section').style.display = 'block';
   document.querySelector(`button[onclick="showSection('${section}')"]`).classList.add('active');
+  if (section === 'hours') {
+    document.getElementById('hoursForm').style.display = 'none';
+  }
 };
 window.toggleForm = function () {
   const form = document.getElementById('productForm');
@@ -622,6 +1081,78 @@ window.deleteCategory = function (categoryKey) {
   if (confirm('Tem certeza que deseja excluir esta categoria?')) {
     const categoryRef = ref(database, `categories/${categoryKey}`);
     remove(categoryRef);
+  }
+};
+window.toggleHoursForm = function () {
+  const form = document.getElementById('hoursForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+  if (form.style.display === 'block') {
+    document.getElementById('dayOfWeek').value = '';
+    document.getElementById('openTime').value = '';
+    document.getElementById('closeTime').value = '';
+  }
+};
+window.addHours = function () {
+  const day = document.getElementById('dayOfWeek').value;
+  const open = document.getElementById('openTime').value;
+  const close = document.getElementById('closeTime').value;
+  if (day && open && close) {
+    push(hoursRef, {
+      day: day,
+      openTime: open,
+      closeTime: close
+    });
+    document.getElementById('dayOfWeek').value = '';
+    document.getElementById('openTime').value = '';
+    document.getElementById('closeTime').value = '';
+    toggleHoursForm();
+  } else {
+    alert('Por favor, preencha todos os campos!');
+  }
+};
+window.deleteHours = function (hoursKey) {
+  if (confirm('Tem certeza que deseja excluir este horário?')) {
+    const hoursRef = ref(database, `hours/${hoursKey}`);
+    remove(hoursRef);
+  }
+};
+window.editHours = function (hoursKey, hours) {
+  currentEditingHoursKey = hoursKey;
+  document.getElementById('editDayOfWeek').value = hours.day;
+  document.getElementById('editOpenTime').value = hours.openTime;
+  document.getElementById('editCloseTime').value = hours.closeTime;
+  document.getElementById('hoursEditForm').style.display = 'block';
+  document.getElementById('hoursEditForm').scrollIntoView({
+    behavior: 'smooth'
+  });
+};
+window.toggleHoursEditForm = function () {
+  const form = document.getElementById('hoursEditForm');
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+};
+window.updateHours = function () {
+  if (!currentEditingHoursKey) return;
+  const day = document.getElementById('editDayOfWeek').value;
+  const openTime = document.getElementById('editOpenTime').value;
+  const closeTime = document.getElementById('editCloseTime').value;
+  if (day && openTime && closeTime) {
+    const hoursRef = ref(database, `hours/${currentEditingHoursKey}`);
+    update(hoursRef, {
+      day: day,
+      openTime: openTime,
+      closeTime: closeTime
+    }).then(() => {
+      document.getElementById('hoursEditForm').style.display = 'none';
+      currentEditingHoursKey = null;
+      document.getElementById('editDayOfWeek').value = '';
+      document.getElementById('editOpenTime').value = '';
+      document.getElementById('editCloseTime').value = '';
+    }).catch(error => {
+      console.error('Error updating hours:', error);
+      alert('Error updating hours');
+    });
+  } else {
+    alert('Please fill in all fields!');
   }
 };
 onValue(productsRef, snapshot => {
@@ -781,6 +1312,59 @@ onValue(categoriesRef, snapshot => {
     option.textContent = category.name;
     categorySelect.appendChild(option.cloneNode(true));
     editCategorySelect.appendChild(option);
+  });
+});
+onValue(hoursRef, snapshot => {
+  const hoursList = document.getElementById('hoursList');
+  hoursList.innerHTML = '';
+  const hours = [];
+  snapshot.forEach(childSnapshot => {
+    hours.push({
+      key: childSnapshot.key,
+      ...childSnapshot.val()
+    });
+  });
+  const weekdayOrder = {
+    'Segunda': 1,
+    'Terça': 2,
+    'Quarta': 3,
+    'Quinta': 4,
+    'Sexta': 5,
+    'Sábado': 6,
+    'Domingo': 7
+  };
+  hours.sort((a, b) => weekdayOrder[a.day] - weekdayOrder[b.day]);
+  hours.forEach(hour => {
+    const hourElement = document.createElement('div');
+    hourElement.className = 'hours-item';
+    hourElement.innerHTML = `
+      <div class="day-info">
+        <strong>${hour.day}-feira</strong>
+        <p>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          ${hour.openTime} - ${hour.closeTime}
+        </p>
+      </div>
+      <div class="product-actions">
+        <button class="edit-hours-btn" onclick='editHours("${hour.key}", ${JSON.stringify(hour)})'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5L13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175l-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+          </svg>
+          Editar
+        </button>
+        <button class="delete-btn" onclick="deleteHours('${hour.key}')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+          </svg>
+          Excluir
+        </button>
+      </div>
+    `;
+    hoursList.appendChild(hourElement);
   });
 });
 window.deleteProduct = function (productKey) {
@@ -985,7 +1569,72 @@ window.duplicateProduct = function (product) {
   };
   push(productsRef, duplicatedProduct);
 };
+window.toggleStoreStatus = function (event) {
+  const isOpen = event.target.checked;
+  update(storeStatusRef, {
+    isOpen: isOpen,
+    lastUpdated: Date.now()
+  }).then(() => {
+    document.getElementById('storeStatusText').textContent = isOpen ? 'Aberto' : 'Fechado';
+  }).catch(error => {
+    console.error('Erro ao atualizar status da loja:', error);
+    event.target.checked = !isOpen;
+  });
+};
+onValue(storeStatusRef, snapshot => {
+  const status = snapshot.val() || {
+    isOpen: false
+  };
+  const toggle = document.getElementById('storeOpenToggle');
+  const statusText = document.getElementById('storeStatusText');
+  toggle.checked = status.isOpen;
+  statusText.innerHTML = status.isOpen ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#4CAF50" viewBox="0 0 16 16">
+      <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm10.03 4.97a.75.75 0 0 1 .011 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.75.75 0 0 1 1.08-.022z"/>
+    </svg> Aberto` : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ef5350" viewBox="0 0 16 16">
+      <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+    </svg> Fechado`;
+  if (!toggle.hasEventListener) {
+    toggle.hasEventListener = true;
+  }
+});
+const defaultHours = [{
+  day: 'Segunda',
+  openTime: '09:00',
+  closeTime: '18:00'
+}, {
+  day: 'Terça',
+  openTime: '09:00',
+  closeTime: '18:00'
+}, {
+  day: 'Quarta',
+  openTime: '09:00',
+  closeTime: '18:00'
+}, {
+  day: 'Quinta',
+  openTime: '09:00',
+  closeTime: '18:00'
+}, {
+  day: 'Sexta',
+  openTime: '09:00',
+  closeTime: '18:00'
+}, {
+  day: 'Sábado',
+  openTime: '09:00',
+  closeTime: '18:00'
+}, {
+  day: 'Domingo',
+  openTime: '09:00',
+  closeTime: '18:00'
+}];
+get(hoursRef).then(snapshot => {
+  if (!snapshot.exists()) {
+    defaultHours.forEach(hour => {
+      push(hoursRef, hour);
+    });
+  }
+});
 document.getElementById('productsSection').style.display = 'block';
+document.getElementById('hoursSection').style.display = 'none';
 document.getElementById('ordersSection').style.display = 'none';
 document.getElementById('categoriesSection').style.display = 'none';</script>
 
