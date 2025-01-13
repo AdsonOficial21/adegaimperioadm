@@ -741,7 +741,7 @@ input:checked + .slider:before {
         
         <div class="form-group">
           <label for="storeMessage">Mensagem quando Fechado</label>
-          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&#xe1;rio de funcionamento &#xe9; das {openTime} &#xe0;s {closeTime}.</textarea>
+          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&amp;#xe1;rio de funcionamento &amp;#xe9; das {openTime} &amp;#xe0;s {closeTime}.</textarea>
         </div>
         
         <button class="submit-btn" onclick="saveHours()">Salvar Altera&#xe7;&#xf5;es</button>
@@ -818,6 +818,10 @@ window.addProduct = function () {
 };
 window.toggleCategoryForm = function () {
   const form = document.getElementById('categoryForm');
+  const categoryNameInput = document.getElementById('categoryName');
+  if (form.style.display === 'none') {
+    categoryNameInput.value = '';
+  }
   form.style.display = form.style.display === 'none' ? 'block' : 'none';
 };
 window.addCategory = function () {
