@@ -741,7 +741,7 @@ input:checked + .slider:before {
         
         <div class="form-group">
           <label for="storeMessage">Mensagem quando Fechado</label>
-          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&amp;#xe1;rio de funcionamento &amp;#xe9; das {openTime} &amp;#xe0;s {closeTime}.</textarea>
+          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&amp;amp;#xe1;rio de funcionamento &amp;amp;#xe9; das {openTime} &amp;amp;#xe0;s {closeTime}.</textarea>
         </div>
         
         <button class="submit-btn" onclick="saveHours()">Salvar Altera&#xe7;&#xf5;es</button>
@@ -778,6 +778,9 @@ window.showSection = function (section) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById(section + 'Section').style.display = 'block';
   document.querySelector(`button[onclick="showSection('${section}')"]`).classList.add('active');
+  if (section === 'hours') {
+    resetHoursForm();
+  }
 };
 window.toggleForm = function () {
   const form = document.getElementById('productForm');
@@ -1065,6 +1068,24 @@ window.saveHours = function () {
     alert('Por favor, preencha todos os horários!');
   }
 };
+function resetHoursForm() {
+  onValue(hoursRef, snapshot => {
+    const hours = snapshot.val();
+    if (hours) {
+      document.getElementById('openTime').value = hours.openTime || '';
+      document.getElementById('closeTime').value = hours.closeTime || '';
+      document.getElementById('storeMessage').value = hours.message || '';
+      const storeStatus = document.getElementById('storeStatus');
+      storeStatus.checked = hours.status === 'open';
+      const statusLabel = document.getElementById('statusLabel');
+      statusLabel.textContent = hours.status === 'open' ? 'Aberta' : 'Fechada';
+      const slider = storeStatus.nextElementSibling;
+      slider.style.background = hours.status === 'open' ? '#00c853' : '#f44336';
+    }
+  }, {
+    onlyOnce: true
+  });
+}
 document.getElementById('storeStatus').addEventListener('change', function (e) {
   const label = document.getElementById('statusLabel');
   label.textContent = e.target.checked ? 'Aberta' : 'Fechada';
