@@ -616,11 +616,6 @@ input:checked + .slider:before {
                 <label for="productCategory">Categoria</label>
                 <select id="productCategory" required>
                     <option value>Selecione uma categoria</option>
-                    <option value="bebidas">Bebidas</option>
-                    <option value="destilados">Destilados</option>
-                    <option value="cervejas">Cervejas</option>
-                    <option value="vinhos">Vinhos</option>
-                    <option value="outros">Outros</option>
                 </select>
             </div>
             <div class="form-group">
@@ -650,11 +645,6 @@ input:checked + .slider:before {
                 <label for="editProductCategory">Categoria</label>
                 <select id="editProductCategory" required>
                     <option value>Selecione uma categoria</option>
-                    <option value="bebidas">Bebidas</option>
-                    <option value="destilados">Destilados</option>
-                    <option value="cervejas">Cervejas</option>
-                    <option value="vinhos">Vinhos</option>
-                    <option value="outros">Outros</option>
                 </select>
             </div>
             <div class="form-group">
@@ -741,7 +731,7 @@ input:checked + .slider:before {
         
         <div class="form-group">
           <label for="storeMessage">Mensagem quando Fechado</label>
-          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&amp;amp;#xe1;rio de funcionamento &amp;amp;#xe9; das {openTime} &amp;amp;#xe0;s {closeTime}.</textarea>
+          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&amp;amp;amp;amp;amp;amp;amp;#xe1;rio de funcionamento &amp;amp;amp;amp;amp;amp;amp;#xe9; das {openTime} &amp;amp;amp;amp;amp;amp;amp;#xe0;s {closeTime}.</textarea>
         </div>
         
         <button class="submit-btn" onclick="saveHours()">Salvar Altera&#xe7;&#xf5;es</button>
@@ -842,7 +832,28 @@ window.addCategory = function () {
 window.deleteCategory = function (categoryKey) {
   if (confirm('Tem certeza que deseja excluir esta categoria?')) {
     const categoryRef = ref(database, `categories/${categoryKey}`);
-    remove(categoryRef);
+    get(categoryRef).then(snapshot => {
+      const categoryToDelete = snapshot.val();
+      if (categoryToDelete) {
+        const categoryName = categoryToDelete.name;
+        const productsRef = ref(database, 'products');
+        onValue(productsRef, snapshot => {
+          snapshot.forEach(childSnapshot => {
+            const product = childSnapshot.val();
+            const productKey = childSnapshot.key;
+            if (product.category === categoryName) {
+              const productRef = ref(database, `products/${productKey}`);
+              update(productRef, {
+                category: "Sem Categoria"
+              });
+            }
+          });
+        }, {
+          onlyOnce: true
+        });
+        remove(categoryRef);
+      }
+    });
   }
 };
 window.deleteProduct = function (productKey) {
@@ -1037,8 +1048,9 @@ window.backToDelivering = function (orderKey) {
   }
 };
 window.duplicateProduct = function (product) {
+  const baseName = product.name.replace(' (cópia)', '');
   const duplicatedProduct = {
-    name: product.name + ' (cópia)',
+    name: baseName + ' (cópia)',
     price: product.price,
     quantity: product.quantity,
     image: product.image,
@@ -1235,8 +1247,12 @@ onValue(categoriesRef, snapshot => {
   categoriesList.innerHTML = '';
   const categorySelect = document.getElementById('productCategory');
   const editCategorySelect = document.getElementById('editProductCategory');
-  categorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
-  editCategorySelect.innerHTML = '<option value="">Selecione uma categoria</option>';
+  categorySelect.innerHTML = `
+    <option value="">Selecione uma categoria</option>
+  `;
+  editCategorySelect.innerHTML = `
+    <option value="">Selecione uma categoria</option>
+  `;
   const categories = [];
   snapshot.forEach(childSnapshot => {
     categories.push({
@@ -1246,6 +1262,14 @@ onValue(categoriesRef, snapshot => {
   });
   categories.sort((a, b) => a.name.localeCompare(b.name));
   categories.forEach(category => {
+    if (category.name === "Sem Categoria") {
+      const option = document.createElement('option');
+      option.value = category.name;
+      option.textContent = category.name;
+      option.style.display = "none";
+      editCategorySelect.appendChild(option);
+      return;
+    }
     const categoryElement = document.createElement('div');
     categoryElement.className = 'category-item';
     categoryElement.innerHTML = `
