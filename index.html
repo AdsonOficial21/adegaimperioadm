@@ -731,7 +731,7 @@ input:checked + .slider:before {
         
         <div class="form-group">
           <label for="storeMessage">Mensagem quando Fechado</label>
-          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&amp;amp;amp;amp;amp;amp;amp;#xe1;rio de funcionamento &amp;amp;amp;amp;amp;amp;amp;#xe9; das {openTime} &amp;amp;amp;amp;amp;amp;amp;#xe0;s {closeTime}.</textarea>
+          <textarea id="storeMessage" rows="4" required>Desculpe, estamos fechados no momento. Nosso hor&#xe1;rio de funcionamento &#xe9; das {openTime} &#xe0;s {closeTime}.</textarea>
         </div>
         
         <button class="submit-btn" onclick="saveHours()">Salvar Altera&#xe7;&#xf5;es</button>
@@ -771,7 +771,55 @@ window.showSection = function (section) {
   if (section === 'hours') {
     resetHoursForm();
   }
+  if (section === 'products') {
+    const searchInput = document.getElementById('productSearch');
+    searchInput.value = '';
+    onValue(productsRef, snapshot => {
+      const products = [];
+      snapshot.forEach(childSnapshot => {
+        products.push({
+          key: childSnapshot.key,
+          timestamp: childSnapshot.val().timestamp || 0,
+          ...childSnapshot.val()
+        });
+      });
+      products.sort((a, b) => b.timestamp - a.timestamp);
+      renderProducts(products);
+    }, {
+      onlyOnce: true
+    });
+  } else if (section === 'categories') {
+    document.getElementById('categoryName').value = '';
+    document.getElementById('editCategoryName').value = '';
+    document.getElementById('categoryForm').style.display = 'none';
+    document.getElementById('editCategoryForm').style.display = 'none';
+  }
 };
+function renderProducts(productsToRender) {
+  const productsList = document.getElementById('productsList');
+  productsList.innerHTML = '';
+  productsToRender.forEach(product => {
+    const productElement = document.createElement('div');
+    productElement.className = 'product-item';
+    productElement.innerHTML = `
+      <div style="display: flex; align-items: center;">
+        <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/50'">
+        <div>
+          <strong>${product.name}</strong>
+          <p>R$ ${product.price.toFixed(2)}</p>
+          <p>Quantidade: ${product.quantity}</p>
+          <p>Categoria: ${product.category || 'Não definida'}</p>
+        </div>
+      </div>
+      <div class="product-actions">
+        <button class="edit-btn" onclick='editProduct("${product.key}", ${JSON.stringify(product)})'>Editar</button>
+        <button class="duplicate-btn" onclick='duplicateProduct(${JSON.stringify(product)})'>Duplicar</button>
+        <button class="delete-btn" onclick="deleteProduct('${product.key}')">Excluir</button>
+      </div>
+    `;
+    productsList.appendChild(productElement);
+  });
+}
 window.toggleForm = function () {
   const form = document.getElementById('productForm');
   document.body.style.overflow = form.style.display === 'none' ? 'hidden' : 'auto';
@@ -1003,6 +1051,7 @@ window.updateCategory = function () {
 };
 window.cancelCategoryEdit = function () {
   document.getElementById('editCategoryForm').style.display = 'none';
+  document.getElementById('editCategoryName').value = '';
   currentEditingCategoryKey = null;
 };
 window.deliverOrder = function (orderKey) {
@@ -1055,7 +1104,7 @@ window.duplicateProduct = function (product) {
     quantity: product.quantity,
     image: product.image,
     category: product.category,
-    timestamp: Date.now()
+    timestamp: product.timestamp + 1 // Set timestamp just after original product
   };
   push(productsRef, duplicatedProduct);
 };
@@ -1130,36 +1179,32 @@ onValue(productsRef, snapshot => {
       ...childSnapshot.val()
     });
   });
-  products.sort((a, b) => b.timestamp - a.timestamp);
+
+  // Modified sort to group copies after originals
+  products.sort((a, b) => {
+    const aIsOriginal = !a.name.includes('(cópia)');
+    const bIsOriginal = !b.name.includes('(cópia)');
+    const aBaseName = a.name.replace(' (cópia)', '');
+    const bBaseName = b.name.replace(' (cópia)', '');
+    
+    if (aBaseName === bBaseName) {
+      if (aIsOriginal && !bIsOriginal) return -1;
+      if (!aIsOriginal && bIsOriginal) return 1;
+      return b.timestamp - a.timestamp;
+    }
+    return b.timestamp - a.timestamp;
+  });
+
   function filterProducts(searchTerm) {
     const normalizedSearchTerm = removeAccents(searchTerm.toLowerCase());
-    return products.filter(product => removeAccents(product.name.toLowerCase()).includes(normalizedSearchTerm) || removeAccents(product.category.toLowerCase()).includes(normalizedSearchTerm));
+    return products.filter(product => 
+      removeAccents(product.name.toLowerCase()).includes(normalizedSearchTerm) || 
+      removeAccents(product.category.toLowerCase()).includes(normalizedSearchTerm)
+    );
   }
-  function renderProducts(productsToRender) {
-    productsList.innerHTML = '';
-    productsToRender.forEach(product => {
-      const productElement = document.createElement('div');
-      productElement.className = 'product-item';
-      productElement.innerHTML = `
-        <div style="display: flex; align-items: center;">
-          <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/50'">
-          <div>
-            <strong>${product.name}</strong>
-            <p>R$ ${product.price.toFixed(2)}</p>
-            <p>Quantidade: ${product.quantity}</p>
-            <p>Categoria: ${product.category || 'Não definida'}</p>
-          </div>
-        </div>
-        <div class="product-actions">
-          <button class="edit-btn" onclick='editProduct("${product.key}", ${JSON.stringify(product)})'>Editar</button>
-          <button class="duplicate-btn" onclick='duplicateProduct(${JSON.stringify(product)})'>Duplicar</button>
-          <button class="delete-btn" onclick="deleteProduct('${product.key}')">Excluir</button>
-        </div>
-      `;
-      productsList.appendChild(productElement);
-    });
-  }
+
   renderProducts(products);
+
   searchInput.addEventListener('input', e => {
     const searchTerm = e.target.value;
     const filteredProducts = filterProducts(searchTerm);
